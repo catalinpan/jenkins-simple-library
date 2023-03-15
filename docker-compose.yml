@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  jenkins:
+    image: jenkins/jenkins:2.387.1-lts
+    ports:
+      - 80:8080
+      - 50000:50000
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - ./casc_configs:/var/jenkins_conf
+      - ./plugins.txt://usr/share/jenkins/ref/plugins.txt
+    environment:
+      - CASC_JENKINS_CONFIG=/var/jenkins_conf
+    entrypoint: |
+      /bin/bash -c "
+        set -e
+        /bin/jenkins-plugin-cli -f /usr/share/jenkins/ref/plugins.txt
+        echo 2.0 > /usr/share/jenkins/ref/jenkins.install.UpgradeWizard.state
+        /usr/bin/tini -- /usr/local/bin/jenkins.sh
+      "
+volumes:
+  jenkins_home:

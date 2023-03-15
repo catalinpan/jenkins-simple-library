@@ -1,0 +1,20 @@
+jobs:
+  - script: >
+      job('_test-dsl-seed') {
+          scm {
+              git {
+                  remote {
+                      url('https://github.com/catalinpan/jenkins-simple-library.git')
+                  }
+                  branches('main')
+              }
+          }
+          steps {
+            dsl {
+              external('jobs/test/*.groovy')
+              removeAction('DELETE')
+              ignoreExisting(false)
+              removeViewAction('DELETE')
+             }
+          }
+      }
