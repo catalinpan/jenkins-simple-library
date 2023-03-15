@@ -1,0 +1,28 @@
+podTemplate(yaml: '''
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: agent
+    imagePullPolicy: IfNotPresent
+    image: ubuntu:20.04
+    command:
+    - sleep
+    - infinity
+    tty: true
+''') {
+  node(POD_LABEL) {
+    container('agent') {
+      stage('test install') {
+        ansiColor('xterm') {
+          sh '''
+          #!/bin/bash
+          set +x pipefail
+          apt-get update
+          apt-get install nmap iputils-ping -y
+          '''
+        }
+      }
+    }
+  }
+}
